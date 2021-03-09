@@ -1,13 +1,14 @@
- pragma solidity ^0.4.17;
+ // SPDX-License-Identifier: MIT
+ pragma solidity ^0.7.4;
  contract CampaognFactory{
      address[] public deployedCampaigns;
      
      function createCampaign(uint minimum) public{
-         address newCampaign = new Campaign(minimum, msg.sender);
+         address newCampaign = address(new Campaign(minimum, msg.sender));
          deployedCampaigns.push(newCampaign);
      }
      
-     function getDeployedCampains() public view returns (address[]){
+     function getDeployedCampains() public view returns (address[] memory){
          return deployedCampaigns;
      }
  }
@@ -27,12 +28,12 @@
      uint public minimumContribution;
      mapping(address=>bool)public approvers;
      uint public approversCount;
-     
+     mapping(address=>bool) public  approvals;
      modifier restricted(){
          require(msg.sender == manager);
          _;
      }
-     function Campaign(uint minimum, address creator)public{
+     constructor(uint minimum, address creator){
          manager = creator;
          minimumContribution = minimum;
          
@@ -45,19 +46,17 @@
          
           approversCount++;
      }
-     
-     function createRequest(string description,uint value,address recipient)
+     uint numRequests;
+     function createRequest(string memory description,uint value,address recipient)
      public restricted {
-     Request memory newRequest = Request({
-         description:description,
-         value:value,
-         recipient:recipient,
-         complete:false,
-         approvalCount:0
-         
-     });  
+      Request storage r = requests[numRequests++];
+                r.description = description;
+                r.value = value;
+                r.recipient = recipient;
+                r.complete = false;
+                r.approvalCount = 0;
      
-     requests.push(newRequest);
+     //requests.push(r);
      }
      
      function approveRequest(uint index) public {
