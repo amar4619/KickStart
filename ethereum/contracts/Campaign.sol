@@ -1,6 +1,6 @@
  // SPDX-License-Identifier: MIT
  pragma solidity ^0.7.4;
- contract CampaognFactory{
+ contract CampaignFactory{
      address[] public deployedCampaigns;
      
      function createCampaign(uint minimum) public{
@@ -8,7 +8,7 @@
          deployedCampaigns.push(newCampaign);
      }
      
-     function getDeployedCampains() public view returns (address[] memory){
+     function getDeployedCampaigns() public view returns (address[] memory){
          return deployedCampaigns;
      }
  }
