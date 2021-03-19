@@ -27,7 +27,7 @@ const output = JSON.parse(solc.compile(JSON.stringify(input)));
 
 if (output.errors) {
     output.errors.forEach(err => {
-        console.log(err.formattedMessage);
+        console.log("err.formattedMessage");
     });
 } else {
     const contracts = output.contracts["Campaign.sol"];

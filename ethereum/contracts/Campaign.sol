@@ -1,84 +1,105 @@
- // SPDX-License-Identifier: MIT
- pragma solidity ^0.7.4;
- contract CampaignFactory{
-     address[] public deployedCampaigns;
-     
-     function createCampaign(uint minimum) public{
-         address newCampaign = address(new Campaign(minimum, msg.sender));
-         deployedCampaigns.push(newCampaign);
-     }
-     
-     function getDeployedCampaigns() public view returns (address[] memory){
-         return deployedCampaigns;
-     }
- }
- contract Campaign{
-     
-     struct Request{
-         string description;
-         uint value;
-         address recipient;
-         bool complete;
-         uint approvalCount;
-         mapping(address=>bool) approvals;
-         }
-     
-     Request[] public requests;
-     address public manager;
-     uint public minimumContribution;
-     mapping(address=>bool)public approvers;
-     uint public approversCount;
-     mapping(address=>bool) public  approvals;
-     modifier restricted(){
-         require(msg.sender == manager);
-         _;
-     }
-     constructor(uint minimum, address creator){
-         manager = creator;
-         minimumContribution = minimum;
-         
-     }
-     
-     function contribute() public payable{
-         require(msg.value > minimumContribution);
-        
-          approvers[msg.sender] =true;
-         
-          approversCount++;
-     }
-     uint numRequests;
-     function createRequest(string memory description,uint value,address recipient)
-     public restricted {
-      Request storage r = requests[numRequests++];
-                r.description = description;
-                r.value = value;
-                r.recipient = recipient;
-                r.complete = false;
-                r.approvalCount = 0;
-     
-     //requests.push(r);
-     }
-     
-     function approveRequest(uint index) public {
-         Request storage request = requests[index];
-         require(approvers[msg.sender]);
-         require(!request.approvals[msg.sender]);
-         request.approvals[msg.sender] = true;
-         request.approvalCount++;
-     }
-     
-     function finalizeRequest(uint index)public restricted{
-         
-         Request storage request = requests[index];
-         
-         require(request.approvalCount >(approversCount/2));
-       require(!request.complete);
-       request.complete=true;
-     }
-     
-     
-     //http://remix.ethereum.org/assets/img/unitTesting.webp
-     
-     
-     
- }
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.6.5;
+
+contract CampaignFactory {
+    address[] public deployedCampaigns;
+
+    function createCampaign(uint minimumContri) public {
+        address newCampaign = address(new Campaign(minimumContri, msg.sender));
+        deployedCampaigns.push(newCampaign);
+    }
+
+    function getDeployedCampaigns() public view returns(address[] memory) {
+        return deployedCampaigns;
+    }
+}
+
+contract Campaign {
+
+    struct Request {
+        string description;
+        uint value;
+        address payable recipient;
+        bool complete;
+        uint approvalCount;
+        mapping(address => bool) approvals;
+    }
+
+    address payable public manager;
+    uint public minimumContribution;
+    mapping(address => bool) public approvers;
+    uint public approversCount;
+
+    Request[] public requests;
+
+    modifier restricted() {
+        require(msg.sender == manager);
+        _;
+    }
+
+    constructor(uint c, address payable creator) public {
+        manager = creator;
+        minimumContribution = c;
+    }
+
+    function contribute() public payable {
+        require(msg.value > minimumContribution);
+
+        // Keep track of number of contributors
+        if(!approvers[msg.sender]) {
+          approversCount ++;
+        }
+        approvers[msg.sender] = true;
+    }
+
+    function createRequest(string memory description, uint value, address payable recipient) public restricted {
+        // Ensure we can't ask for more money than the contract holds
+        require(value <= address(this).balance);
+        Request memory newRequest = Request({
+            description: description,
+            value: value,
+            recipient: recipient,
+            complete: false,
+            approvalCount: 0
+        });
+
+        requests.push(newRequest);
+    }
+
+    function approveRequest(uint index) public {
+        // he is contributer
+        // he has not already approved that request
+        require(approvers[msg.sender]);
+        require(!requests[index].approvals[msg.sender]);
+
+        // make this contributer's approval true in that request
+        // increment the approvalCount of that request
+        requests[index].approvals[msg.sender] = true;
+        requests[index].approvalCount++;
+    }
+
+    function finalizeRequest(uint index) public restricted {
+        // Request is not already finalized
+        // Request Approval count is greater than total approvers/contributers
+        require(!requests[index].complete);
+        require(requests[index].approvalCount > (approversCount/2));
+
+        // transfer money
+        // mark request as completed
+        requests[index].recipient.transfer(requests[index].value);
+        requests[index].complete = true;
+    }
+    function getSummary() public view returns( uint, uint, uint, uint, address ) {
+        return (
+          minimumContribution,
+          address(this).balance,
+          requests.length,
+          approversCount,
+          manager
+          );
+    }
+
+    function getRequestCount() public view returns( uint ) {
+        return requests.length;
+    }
+}
