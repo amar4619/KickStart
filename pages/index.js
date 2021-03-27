@@ -30,11 +30,7 @@ class CampaignIndex extends Component {
         return (
             <Layout>
                 <div>
-                    <link
-                        async
-                        rel="stylesheet"
-                        href="//cdn.jsdelivr.net/npm/semantic-ui@${props.versions.sui}/dist/semantic.min.css"
-                    />
+                   
                     <h3>Open tags</h3>
                     
                     <Button floated='right'

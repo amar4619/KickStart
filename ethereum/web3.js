@@ -3,13 +3,15 @@ import Web3 from "web3";
 let web3;
 
 if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
+    //added when I was working in web part
+    window.ethereum.enable();
     web3 = new Web3(window.web3.currentProvider);
 } else {
     //We wre in the browser or the user is not using running metamask
-const provider = new Web3.providers.HttpProvider(
-    'https://rinkeby.infura.io/v3/1da55699e83a4abab84358b0b5679398'
-);
-web3 = new Web3(provider);
+    const provider = new Web3.providers.HttpProvider(
+        'https://rinkeby.infura.io/v3/1da55699e83a4abab84358b0b5679398'
+    );
+    web3 = new Web3(provider);
 }
 
 
