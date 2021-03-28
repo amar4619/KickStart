@@ -3,11 +3,12 @@ import Layout from '../../components/Layout';
 import { Form, Button, Input,Message } from 'semantic-ui-react';
 import factory from '../../ethereum/factory'
 import web3 from '../../ethereum/web3';
-
+import {Router} from '../../routes'
 class CampaignNew extends Component {
     state = {
         minimumContribution: '',
         errorMessage:"",
+        loading:false,
     }
     onSubmit = async event => {
         event.preventDefault();
@@ -40,7 +41,7 @@ class CampaignNew extends Component {
                         onChange={event =>this.setState({minimumContribution : event.target.value})}/>
                     </Form.Field>
                     <Message error header='Oops!' content ={this.state.errorMessage} />
-                    <Button primary>Create!!</Button>
+                    <Button loading ={this.state.loading} primary>Create!!</Button>
                     
                 </Form>
             

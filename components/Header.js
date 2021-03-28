@@ -1,44 +1,28 @@
 
 import React, { Component } from 'react'
 import { Menu } from 'semantic-ui-react'
+import { Link } from '../routes'
+
 
 export default () => {
 
-    return (
-      <Menu style={{marginTop:'10px'}}>
-        <Menu.Item
-          name='browse'
-         // active={activeItem === 'browse'}
-          //onClick={this.handleItemClick}
-        >
-          Browse
-        </Menu.Item>
+  return (
+    <Menu style={{ marginTop: '10px' }}>
 
-        <Menu.Item
-          name='submit'
-         // active={activeItem === 'submit'}
-         // onClick={this.handleItemClick}
-        >
-          Submit
-        </Menu.Item>
+      <Link route='/'>
+        <a className='item'>CrowdCoin</a>
+      </Link>
 
-        <Menu.Menu position='right'>
-          <Menu.Item
-            name='signup'
-           // active={activeItem === 'signup'}
-           // onClick={this.handleItemClick}
-          >
-            Sign Up
-          </Menu.Item>
+      <Menu.Menu position='right'>
+        <Link route='/'>
+          <a className='item'>Campaigns</a>
+        </Link>
 
-          <Menu.Item
-            name='help'
-           // active={activeItem === 'help'}
-           // onClick={this.handleItemClick}
-          >
-            Help
-          </Menu.Item>
-        </Menu.Menu>
-      </Menu>
-    )
-  }
+        <Link route='/campaigns/new'>
+          <a className='item'>+</a>
+        </Link>
+
+      </Menu.Menu>
+    </Menu>
+  )
+}
