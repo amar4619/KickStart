@@ -7,19 +7,21 @@ import ContributeForm from '../../components/ContributeForm'
 import { Link } from '../../routes'
 class CampaignShow extends Component {
   static async getInitialProps(props) {
-    //console.log(props.query.address);
     const campaign = Campaign(props.query.address);
     const summary = await campaign.methods.getSummary().call();
-    //console.log(summary);
+    console.log(summary);
     return {
       address: props.query.address,
-      mininumContribution: summary[0],
+      minimumContribution: summary[0],
       balance: summary[1],
-      requestsCount: summary[2],
+      requestCount: summary[2],
       approversCount: summary[3],
       manager: summary[4]
     };
+    
   }
+
+
 
   renderCards() {
     const {
@@ -63,38 +65,42 @@ class CampaignShow extends Component {
           "The balance is how much money this campaign has to spend.",
       }
     ];
+    console.log(minimumContribution);
     return <Card.Group items={items} />;
   }
   render() {
     return (
       <Layout>
-        <h3>Campaign Show</h3>
-        <Grid>
-          <Grid.Row>
-            <Grid.Column width={10}>
+        <div>
+          <h3>Campaign Show</h3>
+          <Grid>
+            <Grid.Row>
+              <Grid.Column width={10}>
 
-              {this.renderCards()}
+                {this.renderCards()}
 
-            </Grid.Column>
-            <Grid.Column width={6}>
-              <ContributeForm address={this.props.address} />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Link route={`/campaigns/${this.props.address}/requests`}>
-                <a>
-                  <Button primary>View Requests</Button>
-                </a>
-              </Link>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
+              </Grid.Column>
+              <Grid.Column width={6}>
+                <ContributeForm address={this.props.address} />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column>
+                <Link route={`/campaigns/${this.props.address}/requests`}>
+                  <a>
+                    <Button primary>View Requests</Button>
+                  </a>
+                </Link>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
 
-
+        </div>
       </Layout>
 
     )
   }
 }
 export default CampaignShow;
+
+
